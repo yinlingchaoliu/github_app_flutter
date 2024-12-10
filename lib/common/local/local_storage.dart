@@ -1,20 +1,16 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lib_cache/lib_cache.dart';
 
 ///SharedPreferences 本地存储
 class LocalStorage {
-
   static save(String key, value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(key, value);
+    SPUtil.putString(key, value);
   }
 
   static get(String key) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.get(key);
+    return SPUtil.get(key, null);
   }
 
   static remove(String key) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(key);
+    SPUtil.remove(key);
   }
 }

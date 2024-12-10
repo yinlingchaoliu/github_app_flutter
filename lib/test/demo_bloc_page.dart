@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:gsy_github_app_flutter/redux/gsy_state.dart';
 import 'package:gsy_github_app_flutter/redux/login_redux.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lib_cache/lib_cache.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -134,9 +134,8 @@ mixin LoginBLoC on State<LoginPage> {
   }
 
   _initState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _userName = await (prefs.get("username") as Future<String?>);
-    _password = await (prefs.get("password") as Future<String?>);
+    _userName = await SPUtil.getString("username");
+    _password = await SPUtil.getString("password");
     userController.value = TextEditingValue(text: _userName ?? "");
     pwController.value = TextEditingValue(text: _password ?? "");
   }
@@ -148,9 +147,8 @@ mixin LoginBLoC on State<LoginPage> {
     if (_password == null || _password!.isEmpty) {
       return;
     }
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString("username", _userName!);
-    await prefs.setString("password", _password!);
+    await SPUtil.putString("username", _userName!);
+    await SPUtil.putString("password", _password!);
 
     ///通过 redux 去执行登陆流程
     StoreProvider.of<GSYState>(context)
