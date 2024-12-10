@@ -621,6 +621,13 @@ packages:
       relative: true
     source: path
     version: "0.0.1"
+  lib_eventbus:
+    dependency: "direct main"
+    description:
+      path: "common/lib_eventbus"
+      relative: true
+    source: path
+    version: "0.0.1"
   lints:
     dependency: transitive
     description:

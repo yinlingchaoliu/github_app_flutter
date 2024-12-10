@@ -1,5 +1,5 @@
 import 'package:gsy_github_app_flutter/common/event/http_error_event.dart';
-import 'package:gsy_github_app_flutter/common/event/index.dart';
+import 'package:lib_eventbus/lib_eventbus.dart';
 
 ///错误编码
 class Code {
@@ -21,10 +21,13 @@ class Code {
     if (noTip) {
       return message;
     }
-    if(message != null && message is String && (message.contains("Connection refused") || message.contains("Connection reset"))) {
+    if (message != null &&
+        message is String &&
+        (message.contains("Connection refused") ||
+            message.contains("Connection reset"))) {
       code = GITHUB_API_REFUSED;
     }
-    eventBus.fire(HttpErrorEvent(code, message));
+    Event.eventBus.fire(HttpErrorEvent(code, message));
     return message;
   }
 }

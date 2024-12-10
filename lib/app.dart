@@ -5,7 +5,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gsy_github_app_flutter/common/event/http_error_event.dart';
-import 'package:gsy_github_app_flutter/common/event/index.dart';
 import 'package:gsy_github_app_flutter/common/localization/default_localizations.dart';
 import 'package:gsy_github_app_flutter/common/localization/gsy_localizations_delegate.dart';
 import 'package:gsy_github_app_flutter/common/net/code.dart';
@@ -21,6 +20,8 @@ import 'package:gsy_github_app_flutter/redux/gsy_state.dart';
 import 'package:redux/redux.dart';
 
 import 'common/utils/navigator_utils.dart';
+
+import 'package:lib_eventbus/lib_eventbus.dart';
 
 class FlutterReduxApp extends StatefulWidget {
   const FlutterReduxApp({super.key});
@@ -48,15 +49,29 @@ class _FlutterReduxAppState extends State<FlutterReduxApp>
   );
 
   ColorFilter greyscale = const ColorFilter.matrix(<double>[
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0.2126, 0.7152, 0.0722, 0, 0,
-    0,      0,      0,      1, 0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0.2126,
+    0.7152,
+    0.0722,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
   ]);
 
-
   NavigatorObserver navigatorObserver = NavigatorObserver();
-
 
   @override
   void initState() {
@@ -79,10 +94,12 @@ class _FlutterReduxAppState extends State<FlutterReduxApp>
       store: store,
       child: StoreBuilder<GSYState>(builder: (context, store) {
         ///使用 StoreBuilder 获取 store 中的 theme 、locale
-        store.state.platformLocale = WidgetsBinding.instance.platformDispatcher.locale;
+        store.state.platformLocale =
+            WidgetsBinding.instance.platformDispatcher.locale;
         Widget app = MaterialApp(
-          navigatorKey: navKey,
-          ///多语言实现代理
+            navigatorKey: navKey,
+
+            ///多语言实现代理
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
@@ -90,7 +107,9 @@ class _FlutterReduxAppState extends State<FlutterReduxApp>
               GSYLocalizationsDelegate.delegate,
             ],
             supportedLocales: [
-              store.state.locale ?? store.state.platformLocale ?? const Locale('en', 'US')
+              store.state.locale ??
+                  store.state.platformLocale ??
+                  const Locale('en', 'US')
             ],
             locale: store.state.locale,
             theme: store.state.themeData,
@@ -126,8 +145,10 @@ class _FlutterReduxAppState extends State<FlutterReduxApp>
         if (store.state.grey) {
           ///mode one
           app = ColorFiltered(
-              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.saturation),
+              colorFilter:
+                  const ColorFilter.mode(Colors.grey, BlendMode.saturation),
               child: app);
+
           ///mode tow
           // app = ColorFiltered(
           //     colorFilter: greyscale,
@@ -138,7 +159,6 @@ class _FlutterReduxAppState extends State<FlutterReduxApp>
       }),
     );
   }
-
 }
 
 mixin HttpErrorListener on State<FlutterReduxApp> {
@@ -151,7 +171,7 @@ mixin HttpErrorListener on State<FlutterReduxApp> {
     super.initState();
 
     ///Stream演示event bus
-    stream = eventBus.on<HttpErrorEvent>().listen((event) {
+    stream = Event.eventBus.on<HttpErrorEvent>().listen((event) {
       errorHandleFunction(event.code, event.message);
     });
   }
@@ -185,15 +205,16 @@ mixin HttpErrorListener on State<FlutterReduxApp> {
         showToast(GSYLocalizations.i18n(context)!.network_error_422);
         break;
       case Code.NETWORK_TIMEOUT:
-      //超时
+        //超时
         showToast(GSYLocalizations.i18n(context)!.network_error_timeout);
         break;
       case Code.GITHUB_API_REFUSED:
-      //Github API 异常
+        //Github API 异常
         showToast(GSYLocalizations.i18n(context)!.github_refused);
         break;
       default:
-        showToast("${GSYLocalizations.i18n(context)!.network_error_unknown} $message");
+        showToast(
+            "${GSYLocalizations.i18n(context)!.network_error_unknown} $message");
         break;
     }
   }
@@ -205,4 +226,3 @@ mixin HttpErrorListener on State<FlutterReduxApp> {
         toastLength: Toast.LENGTH_LONG);
   }
 }
-
